@@ -1,0 +1,12 @@
+config MT7697
+	tristate "MediaTek MT7697 support"
+	depends on CFG80211
+	select CFG80211_WEXT_EXPORT
+	select WIRELESS_EXT
+	select WEXT_SPY
+	select WEXT_PRIV
+	select WEXT_CORE
+	select WEXT_PROC
+	default m
+	---help---
+	  Taken from mangoh/mangoh linux_drivers/
