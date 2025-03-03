@@ -1,0 +1,6 @@
+config CP2130
+	tristate "CP2130 USB-SPI Bridge"
+	default y
+	---help---
+	  Linux kernel driver for Silicon Labs CP2130 USB-SPI Bridge
+	  Taken from mangOH/cp2130 repo
