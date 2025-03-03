@@ -1,4 +1,4 @@
-CFLAGS_uart.o := -I$(src)/../mt7697common/
+ccflags-y += -I$(src)/../mt7697common/
 
 mt7697serial-y += uart.o
 
