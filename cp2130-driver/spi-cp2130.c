@@ -1743,35 +1743,20 @@ int cp2130_update_ch_config(struct spi_master *master, const char* cfg)
 	struct usb_interface *intf;
 	struct cp2130_device *dev;
 	int ret;
-	//TODO: ME ADDED
-	dev_err(&master->dev, "HELLLOOOOOOO :) Entered cp2130_update_ch_config() function\n");
-	dev_dbg(&master->dev, "DEBUGGGGGGGGGGGGGGGGGGGGGG\n");
 
 	dev = spi_master_get_devdata(master);
-	//TODO: ME ADDED
-	dev_err(&master->dev, "BBBBBBBBBBBBBBBBBB. The dev pointer is: %d\n", (int)dev);
 	if (!dev) {
 		dev_err(&master->dev, "spi_master_get_devdata() failed()\n");
 		ret = -EINVAL;
 		goto cleanup;
 	}
 
-	//TODO: ME ADDED
-	dev_err(&master->dev, "CCCCCCCCCCCCC. The dev pointer is: %d\n", (int)dev);
-
 	dev_dbg(&master->dev, "update channel config('%s')\n", cfg);
 	//TODO COMMENTED OUT
 	// reinit_completion(&dev->update_chn_cfg_compl);
 
-	//TODO: ME ADDED
-	dev_err(&master->dev, "DDDDDDDDDDDDDDDDDDDDDDDDDDDD\n");
-
 	intf = dev->intf;
-	//TODO: ME ADDED
-	dev_err(&master->dev, "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n");
 	ret = channel_config_store(&intf->dev, NULL, cfg, 1);
-	//TODO: ME ADDED
-	dev_err(&master->dev, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\n");
 
 	if (ret < 0) {
 		dev_err(&master->dev, "channel_config_store() failed(%d)\n", ret);
@@ -1782,9 +1767,6 @@ int cp2130_update_ch_config(struct spi_master *master, const char* cfg)
 	//TODO ME COMMENTED the line below
     // wait_for_completion(&dev->update_chn_cfg_compl);
 	dev_dbg(&master->dev, "update channel config complete\n");
-
-	//TODO: ME ADDED
-	dev_err(&master->dev, "FUNCTION FINISHED: cp2130_update_ch_config()\n");
 
 cleanup:
 	return ret;
