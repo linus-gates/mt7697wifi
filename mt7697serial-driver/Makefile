@@ -1,3 +1,3 @@
-obj-m    += mt7697serial.o
+mt7697serial-y += uart.o
 
-mt7697serial-objs = uart.o
+obj-m    += mt7697serial.o

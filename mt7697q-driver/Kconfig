@@ -1,0 +1,5 @@
+config MT7697Q
+	tristate "MT7697 queue"
+	default y
+	---help---
+	  Taken from mangoh/mangoh linux_drivers/

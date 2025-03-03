@@ -1,0 +1,5 @@
+config MT7697SERIAL
+	tristate "mt7697 serial"
+	default y
+	---help---
+	  Taken from mangOH/linux_kernel_modules/mt7697serial/

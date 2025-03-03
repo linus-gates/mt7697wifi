@@ -1,5 +1,5 @@
-config MT7697
-	tristate "MediaTek MT7697 support"
+config MT7697WIFI
+	tristate "MediaTek MT7697 wifi"
 	depends on CFG80211
 	select CFG80211_WEXT_EXPORT
 	select WIRELESS_EXT
@@ -7,6 +7,6 @@ config MT7697
 	select WEXT_PRIV
 	select WEXT_CORE
 	select WEXT_PROC
-	default m
+	default y
 	---help---
 	  Taken from mangoh/mangoh linux_drivers/
