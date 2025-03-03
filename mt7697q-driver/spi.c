@@ -88,8 +88,6 @@ static int __init mt7697spi_init(void)
 	int ret = 0;
 
 	pr_info(DRVNAME" %s(): '%s' initialize\n", __func__, DRVNAME);
-	//TODO: ME ADDED
-	pr_err(DRVNAME" HEYYYYYYYYYYY :) Enterd mt7697spi_init() function\n");
 
 	while (!master && (bus_num >= 0)) {
 		master = spi_busnum_to_master(bus_num);
