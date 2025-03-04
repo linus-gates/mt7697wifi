@@ -1,6 +1,8 @@
 config MT7697WIFI
 	tristate "MediaTek MT7697 wifi"
 	depends on CFG80211
+	depends on MT7697Q
+	depends on MT7697SERIAL
 	select CFG80211_WEXT_EXPORT
 	select WIRELESS_EXT
 	select WEXT_SPY

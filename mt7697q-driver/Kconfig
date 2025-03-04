@@ -1,5 +1,6 @@
 config MT7697Q
 	tristate "MT7697 queue"
+	depends on CP2130
 	default y
 	---help---
 	  Taken from mangoh/mangoh linux_drivers/
