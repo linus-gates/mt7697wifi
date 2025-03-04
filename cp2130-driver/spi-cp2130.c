@@ -30,6 +30,9 @@
 #include <linux/gpio.h>
 #include <linux/version.h>
 
+//TODO: ME ADDED
+#include <linux/delay.h>
+
 #define USB_DEVICE_ID_CP2130         0x87a0
 #define USB_VENDOR_ID_CYGNAL         0x10c4
 
@@ -1767,6 +1770,11 @@ int cp2130_update_ch_config(struct spi_master *master, const char* cfg)
 	//TODO ME COMMENTED the line below
     // wait_for_completion(&dev->update_chn_cfg_compl);
 	dev_dbg(&master->dev, "update channel config complete\n");
+
+	//TODO: ME ADDED need to wait enough time so the update_chn_cfg_compl is complited.
+	dev_err(&master->dev, "Sleeping for 3 seconds\n");
+	msleep(3000);
+	dev_err(&master->dev, "FUNCTION FINISHED: cp2130_update_ch_config()\n");
 
 cleanup:
 	return ret;
