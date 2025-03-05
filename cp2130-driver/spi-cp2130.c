@@ -30,9 +30,6 @@
 #include <linux/gpio.h>
 #include <linux/version.h>
 
-//TODO: ME ADDED
-#include <linux/delay.h>
-
 #define USB_DEVICE_ID_CP2130         0x87a0
 #define USB_VENDOR_ID_CYGNAL         0x10c4
 
@@ -121,7 +118,8 @@ struct cp2130_device {
 	struct work_struct irq_work;
 
 	// TODO: ME ADDED
-	// struct completion update_chn_cfg_compl;
+	/* TODO Remove when echo cmd called from instlegato */
+	struct completion update_chn_cfg_compl;
 
 	struct gpio_chip gpio_chip;
 	char *gpio_names[CP2130_NUM_GPIOS];
@@ -464,6 +462,13 @@ unlock:
 	mutex_unlock(&chip->chn_config_lock);
 
 out:
+	//TODO: ME ADDED
+	/* TODO Remove when echo cmd called from instlegato */
+	if (ret != count) {
+		dev_dbg(&udev->dev, "%s(): notify channel config complete\n", __func__);
+		complete(&chip->update_chn_cfg_compl);
+	}
+
 	kfree(lbuf);
 	return ret;
 }
@@ -982,7 +987,6 @@ static int cp2130_irq_from_pin(struct cp2130_device *dev, int pin)
 	return dev->irq_chip.virq[pin];
 }
 
-//TODO: MAYBE SHOULD USE THIS FUNCTION INSTEAD OF cp2130_update_ch_config
 static void cp2130_update_channel_config(struct work_struct *work)
 {
 	int i;
@@ -1100,6 +1104,11 @@ error_unlock:
 	mutex_unlock(&dev->usb_bus_lock);
 
 error:
+	//TODO: ME ADDED
+	/* TODO Remove when echo cmd called from instlegato */
+	dev_dbg(&dev->udev->dev, "%s(): notify channel config complete\n", __func__);
+	complete(&dev->update_chn_cfg_compl);
+
 	mutex_unlock(&dev->chn_config_lock);
 	dev_err(&dev->udev->dev, "failed to configure channel %d", i);
 }
@@ -1160,6 +1169,11 @@ static void cp2130_read_channel_config(struct work_struct *work)
 		chn->pre_deassert_delay = dev->usb_xfer[6] << 8;
 		chn->pre_deassert_delay |= dev->usb_xfer[7] & 0xff;
 	}
+
+	//TODO: ME ADDED
+	/* TODO Remove when echo cmd called from instlegato */
+	dev_dbg(&dev->udev->dev, "%s(): notify channel config complete\n", __func__);
+	complete(&dev->update_chn_cfg_compl);
 
 	mutex_unlock(&dev->usb_bus_lock);
 	mutex_unlock(&dev->chn_config_lock);
@@ -1683,6 +1697,10 @@ static int cp2130_probe(struct usb_interface *intf,
 	schedule_work(&dev->read_chn_config);
 	schedule_work(&dev->read_otprom);
 
+	//TODO: ME ADDED
+    /* TODO Remove when echo cmd called from instlegato */
+	init_completion(&dev->update_chn_cfg_compl);
+
 	return 0;
 
 err_out:
@@ -1755,8 +1773,7 @@ int cp2130_update_ch_config(struct spi_master *master, const char* cfg)
 	}
 
 	dev_dbg(&master->dev, "update channel config('%s')\n", cfg);
-	//TODO COMMENTED OUT
-	// reinit_completion(&dev->update_chn_cfg_compl);
+	reinit_completion(&dev->update_chn_cfg_compl);
 
 	intf = dev->intf;
 	ret = channel_config_store(&intf->dev, NULL, cfg, 1);
@@ -1767,14 +1784,8 @@ int cp2130_update_ch_config(struct spi_master *master, const char* cfg)
  	}
 
 	/* TODO Remove when echo cmd called from instlegato */
-	//TODO ME COMMENTED the line below
-    // wait_for_completion(&dev->update_chn_cfg_compl);
+    wait_for_completion(&dev->update_chn_cfg_compl);
 	dev_dbg(&master->dev, "update channel config complete\n");
-
-	//TODO: ME ADDED need to wait enough time so the update_chn_cfg_compl is complited.
-	dev_err(&master->dev, "Sleeping for 3 seconds\n");
-	msleep(3000);
-	dev_err(&master->dev, "FUNCTION FINISHED: cp2130_update_ch_config()\n");
 
 cleanup:
 	return ret;
