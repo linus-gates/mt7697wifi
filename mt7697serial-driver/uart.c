@@ -291,6 +291,9 @@ size_t mt7697_uart_read(void *arg, u32 *buf, size_t len)
 	unsigned long count = len * sizeof(u32);
 	int err;
 
+	//TODO: ME ADDED
+	loff_t pos = 0;
+
 	oldfs = get_fs();
 	set_fs(get_ds());
 
@@ -301,7 +304,8 @@ size_t mt7697_uart_read(void *arg, u32 *buf, size_t len)
 
 	dev_dbg(uart_info->dev, "%s(): len(%u)\n", __func__, len * sizeof(u32));
 	while (1) {
-		err = kernel_read(uart_info->fd_hndl, 0, count, (loff_t *)ptr);
+		//TODO ME changed func arguments
+		err = kernel_read(uart_info->fd_hndl, (loff_t *)ptr, count, &pos);
 		dev_dbg(uart_info->dev, "%s(): read(%d)\n", __func__, err);
 		if (err < 0) {
 			dev_err(uart_info->dev,
