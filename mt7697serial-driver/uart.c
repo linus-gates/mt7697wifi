@@ -339,6 +339,9 @@ size_t mt7697_uart_write(void *arg, const u32 *buf, size_t len)
 	struct mt7697_uart_info *uart_info = arg;
 	u8* ptr = (u8*)buf;
 
+	//TODO: ME ADDED
+	loff_t pos = 0;
+
 	mutex_lock(&uart_info->mutex);
 
 	oldfs = get_fs();
@@ -352,7 +355,9 @@ size_t mt7697_uart_write(void *arg, const u32 *buf, size_t len)
 
 	dev_dbg(uart_info->dev, "%s(): len(%u)\n", __func__, len);
 	while (1) {
-		num_write = kernel_write(uart_info->fd_hndl, ptr, left, 0);
+		//TODO ME CHANGED the last argument to be pointer.
+		num_write = kernel_write(uart_info->fd_hndl, ptr, left, &pos);
+
 		dev_dbg(uart_info->dev, "%s(): written(%u)\n", __func__,
 		        num_write);
 		if (num_write < 0) {
