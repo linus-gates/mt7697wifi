@@ -34,15 +34,14 @@ static int itf_idx_start = 0;
 module_param(itf_idx_start, int, S_IRUGO);
 MODULE_PARM_DESC(itf_idx_start, "MT7697 WiFi interface start index");
 
-static void mt7697_to_lower(char** in)
-{
-	char* ptr = (char*)*in;
-	while (*ptr != '\0') {
-		if (((*ptr <= 'Z') && (*ptr >= 'A')) ||
-		    ((*ptr <= 'z') && (*ptr >= 'a')))
-			*ptr = ((*ptr <= 'Z') && (*ptr >= 'A')) ?
-				*ptr + 'a' - 'A':*ptr;
+//TODO ME CHANGE the function logic
+static void mt7697_to_lower(char* str) {
+	char* ptr = str;
 
+	while (*ptr != '\0') {
+		if (*ptr >= 'A' && *ptr <= 'Z') {
+			*ptr = *ptr + ('a' - 'A');
+		}
 		ptr++;
 	}
 }
@@ -206,9 +205,6 @@ static int mt7697_probe(struct platform_device *pdev)
 	struct wiphy *wiphy;
 	struct mt7697_cfg80211_info *cfg;
 	int err = 0;
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "%s(): probe\n", __func__);
-	dev_err(&pdev->dev, "11111111111111111111111\n");
 
 	dev_dbg(&pdev->dev, "%s(): probe\n", __func__);
 	cfg = mt7697_cfg80211_create();
@@ -219,15 +215,9 @@ static int mt7697_probe(struct platform_device *pdev)
 		err = -ENOMEM;
 		goto failed;
 	}
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "222222222222222222222222\n");
 
 	sema_init(&cfg->sem, 1);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "333333333333333333333333\n");
 	cfg->tx_workq = create_workqueue(DRVNAME);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "44444444444444444444444444\n");
 	if (!cfg->tx_workq) {
 		dev_err(&pdev->dev,
 			"%s(): create_workqueue() failed()\n",
@@ -236,26 +226,21 @@ static int mt7697_probe(struct platform_device *pdev)
 		goto failed;
 	}
 
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "555555555555555555555555555555555\n");
 	INIT_WORK(&cfg->init_work, mt7697_init_hw_start);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "66666666666666666666666666666\n");
 	INIT_WORK(&cfg->tx_work, mt7697_tx_work);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "7777777777777777777777777777777\n");
 
 	spin_lock_init(&cfg->vif_list_lock);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "888888888888888888888888888888\n");
 	INIT_LIST_HEAD(&cfg->vif_list);
-
 	spin_lock_init(&cfg->tx_skb_list_lock);
 	INIT_LIST_HEAD(&cfg->tx_skb_list);
+
 	atomic_set(&cfg->tx_skb_pool_idx, 0);
+
 	memset(cfg->tx_skb_pool, 0, sizeof(cfg->tx_skb_pool));
 
-	mt7697_to_lower(&hw_itf);
+	// TODO ME bugfix changed function logic
+	mt7697_to_lower(hw_itf);
+
 	dev_dbg(&pdev->dev, "%s(): hw_itf('%s')\n", __func__, hw_itf);
 	if (!strcmp(hw_itf, "spi")) {
 		if_ops.init		= mt7697q_init;
