@@ -34,6 +34,7 @@ static int itf_idx_start = 0;
 module_param(itf_idx_start, int, S_IRUGO);
 MODULE_PARM_DESC(itf_idx_start, "MT7697 WiFi interface start index");
 
+//TODO ME CHANGE the function logic
 static void mt7697_to_lower(char* str) {
 	char* ptr = str;
 
@@ -229,30 +230,17 @@ static int mt7697_probe(struct platform_device *pdev)
 	INIT_WORK(&cfg->tx_work, mt7697_tx_work);
 
 	spin_lock_init(&cfg->vif_list_lock);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "L1\n");
 	INIT_LIST_HEAD(&cfg->vif_list);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "L2\n");
-
 	spin_lock_init(&cfg->tx_skb_list_lock);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "L3\n");
 	INIT_LIST_HEAD(&cfg->tx_skb_list);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "L4\n");
+
 	atomic_set(&cfg->tx_skb_pool_idx, 0);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "L5\n");
+
 	memset(cfg->tx_skb_pool, 0, sizeof(cfg->tx_skb_pool));
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "L6\n");
 
 	// TODO ME bugfix changed function logic
 	mt7697_to_lower(hw_itf);
 
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "L7\n");
 	dev_dbg(&pdev->dev, "%s(): hw_itf('%s')\n", __func__, hw_itf);
 	if (!strcmp(hw_itf, "spi")) {
 		if_ops.init		= mt7697q_init;
@@ -261,8 +249,6 @@ static int mt7697_probe(struct platform_device *pdev)
 		if_ops.write		= mt7697q_write;
 		if_ops.unblock_writer	= mt7697q_unblock_writer;
 	} else if (!strcmp(hw_itf, "uart")) {
-		//TODO ME ADDED
-		dev_err(&pdev->dev, "L8\n");
 		if_ops.open		= mt7697_uart_open;
 		if_ops.close		= mt7697_uart_close;
 		if_ops.read		= mt7697_uart_read;
@@ -275,8 +261,6 @@ static int mt7697_probe(struct platform_device *pdev)
 		goto failed;
 	}
 
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "L9\n");
 	cfg->hif_ops = &if_ops;
 	cfg->dev = &pdev->dev;
 	skb_queue_head_init(&cfg->tx_skb_queue);
@@ -294,8 +278,6 @@ static int mt7697_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, cfg);
 	schedule_work(&cfg->init_work);
-	//TODO ME ADDED
-	dev_err(&pdev->dev, "L10\n");
 
 failed:
 	if (err < 0) {
