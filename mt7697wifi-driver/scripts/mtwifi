@@ -4,6 +4,7 @@
 # MediaTek wireless 7697 specific applications start or stop here
 # MediaTek WIFI IoT board is managed by SPI bus.
 
+# TODO ME run example: mtwifi start uart 0
 mt_wifi_start() {
     if [ `echo $1 | tr -s '[:upper:]' '[:lower:]'` = `echo "uart" | tr -s '[:upper:]' '[:lower:]'` ] ; then
 	echo "Setup MT7697 UART";
@@ -13,13 +14,23 @@ mt_wifi_start() {
 	# to sleep and then doesn't wake up again when data is received. This is
 	# tracked in QTI9X07-1602. It seems likely that this will be fixed in
 	# WP76/77 release 9. At that point, this workaround can be removed.
-        DEVICE=`cm info | grep Device: | cut -d':' -f2 | sed 's/^ *//g' | cut -c -4`
-        echo "Device: "$DEVICE;
-        if [ $DEVICE = 'WP76' -o $DEVICE = 'WP77' ]; then
-            echo "Enable power control";
-            echo on > /sys/devices/78b0000.uart/power/control || exit 127
-        fi
+
+    # TODO ME commented this. Because looks like we have release 9.
+    # Go by this commmand: dmesg | grep -i 'model'
+    # The output: Machine model: Sierra Wireless, Inc. MDM 9xxx WP series - MangOH Red
+
+        # DEVICE=`cm info | grep Device: | cut -d':' -f2 | sed 's/^ *//g' | cut -c -4`
+        # echo "Device: "$DEVICE;
+        # if [ $DEVICE = 'WP76' -o $DEVICE = 'WP77' ]; then
+        #     echo "Enable power control";
+        #     echo on > /sys/devices/78b0000.uart/power/control || exit 127
+        # fi
     fi
+
+    echo "argument 1 is:"
+    echo $1
+    echo "Argument 2 is:"
+    echo $2
 
     lsmod | grep mac80211 >/dev/null
     if [ $? -eq 1 ]; then
@@ -28,10 +39,12 @@ mt_wifi_start() {
         sleep 2
     fi
 
-    lsmod | grep mt7697wifi_core >/dev/null
+    lsmod | grep mt7697core >/dev/null
     if [ $? -eq 1 ]; then
 	hw_itf=`echo $1 | tr '[A-Z]' '[a-z]'`
-        insmod /legato/systems/current/modules/mt7697wifi_core.ko hw_itf=$hw_itf itf_idx_start=$2 || exit 127
+	echo "hw_itf is: "
+	echo $hw_itf
+        modprobe mt7697core hw_itf=$hw_itf itf_idx_start=$2 || exit 127
         echo "Initialized MT7697 WiFi core";
         sleep 5
     fi
@@ -57,9 +70,9 @@ mt_wifi_stop() {
        ifconfig wlan$1 down
     fi
 
-    lsmod | grep mt7697wifi_core >/dev/null
+    lsmod | grep mt7697core >/dev/null
     if [ $? -eq 0 ]; then
-        rmmod mt7697wifi_core || exit 127
+        rmmod mt7697core || exit 127
         echo "Removed MT7697 WiFi core"; exit 127
     fi
 }
