@@ -27,10 +27,8 @@ mt_wifi_start() {
         # fi
     fi
 
-    echo "argument 1 is:"
-    echo $1
-    echo "Argument 2 is:"
-    echo $2
+    echo "argument 1 is: $1"
+    echo "Argument 2 is: $2"
 
     lsmod | grep mac80211 >/dev/null
     if [ $? -eq 1 ]; then
@@ -42,8 +40,7 @@ mt_wifi_start() {
     lsmod | grep mt7697core >/dev/null
     if [ $? -eq 1 ]; then
 	hw_itf=`echo $1 | tr '[A-Z]' '[a-z]'`
-	echo "hw_itf is: "
-	echo $hw_itf
+	echo "hw_itf is: $hw_itf"
         modprobe mt7697core hw_itf=$hw_itf itf_idx_start=$2 || exit 127
         echo "Initialized MT7697 WiFi core";
         sleep 5
@@ -72,19 +69,23 @@ mt_wifi_stop() {
 
     lsmod | grep mt7697core >/dev/null
     if [ $? -eq 0 ]; then
-        rmmod mt7697core || exit 127
+        modprobe -r mt7697core || exit 127
         echo "Removed MT7697 WiFi core"; exit 127
     fi
 }
 
+# TODO ME run examples:
 case "$1" in
     start)
+        # ./mtwifi start uart 0
         mt_wifi_start $2 $3
         ;;
     stop)
+        # ./mtwifi stop 0
         mt_wifi_stop $2
         ;;
     restart)
+        # ./mtwifi restart uart 0
         mt_wifi_stop $2
         mt_wifi_start $2 $3
         ;;
