@@ -21,3 +21,13 @@ The full options:
 
 KNOWN ISSUE:
 Communication via spi not working. Getting error: "usb 1-1.1: failed to read gpios"
+
+# Connect to internet as client:
+Add to yocto image: dhcpcd
+
+1. Run "/etc/init.d/mtwifi start uart 0"
+2. "ip link set wlan0 up"
+3. Scan for AP: "iw dev wlan0 scan | grep SSID
+4. Configure confgiration file: "wpa_passphrase SSID_NAME PASSWORD > /etc/wpa_supplicant.conf"
+5. Connect to AP: "wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf -D wext"
+6. Get ip and routing configuration. Run: "dhcpcd"
