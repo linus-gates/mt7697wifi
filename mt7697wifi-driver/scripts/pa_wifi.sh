@@ -25,7 +25,7 @@ HARDWAREABSENCE=50
 NODRIVER=100
 TIMEOUT=8
 # PATH
-export PATH=/legato/systems/current/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 
 # Check the connection on the WiFi network interface.
 # Exit with 0 if connected otherwise exit with 8 (time out)
@@ -55,9 +55,9 @@ WiFiReset()
     for i in $(seq 1 ${retries})
     do
       sleep 1
-      /legato/systems/current/modules/files/mt7697wifi_core/mtwifi stop uart 0
+      /etc/init.d/mtwifi stop uart 0
       sleep 1
-      /legato/systems/current/modules/files/mt7697wifi_core/mtwifi start uart 0 && exit 0
+      /etc/init.d/mtwifi start uart 0 && exit 0
     done
     exit 127
 }
@@ -66,29 +66,29 @@ case ${CMD} in
   WIFI_START)
     echo "WIFI_START"
     # Create the WiFi network interface
-    /legato/systems/current/modules/files/mt7697wifi_core/mtwifi start uart 0 && exit 0
+    /etc/init.d/mtwifi start uart 0 && exit 0
     # Store failure reason
     FAILUREREASON=$?
     # If mtwifi indicates firmware fails to boot, do reset
     if [ ${FAILUREREASON} -eq ${FIRMWAREFAILURE} ]; then
         WiFiReset && exit 0
         # Reset fail, do clean up
-        /legato/systems/current/modules/files/mt7697wifi_core/mtwifi stop uart 0
+        /etc/init.d/mtwifi stop uart 0
         exit ${FAILUREREASON}
     fi
     # Hardware is absent, do clean up
     if [ ${FAILUREREASON} -eq ${HARDWAREABSENCE} ]; then
-        /legato/systems/current/modules/files/mt7697wifi_core/mtwifi stop uart 0
+        /etc/init.d/mtwifi stop uart 0
         exit ${FAILUREREASON}
     fi
     # Other reasons, do clean up also
-    /legato/systems/current/modules/files/mt7697wifi_core/mtwifi stop uart 0
+    /etc/init.d/mtwifi stop uart 0
     exit ${FAILUREREASON} ;;
 
   WIFI_STOP)
     echo "WIFI_STOP"
     # Delete the WiFi network interface
-    /legato/systems/current/modules/files/mt7697wifi_core/mtwifi stop uart 0 || exit 127
+    /etc/init.d/mtwifi stop uart 0 || exit 127
     exit 0 ;;
 
   WIFI_SET_EVENT)
@@ -126,7 +126,7 @@ case ${CMD} in
     echo "WIFIAP_HOSTAPD_START"
     (/bin/hostapd /tmp/hostapd.conf -i${IFACE} -B) && exit 0
     # Fail to start hostapd, do cleanup
-    /legato/systems/current/modules/files/mt7697wifi_core/mtwifi stop uart 0
+    /etc/init.d/mtwifi stop uart 0
     exit 127 ;;
 
   WIFIAP_HOSTAPD_STOP)
@@ -197,4 +197,3 @@ case ${CMD} in
     echo "Parameter not valid"
     exit 127 ;;
 esac
-
