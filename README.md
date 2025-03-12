@@ -26,8 +26,23 @@ Communication via spi not working. Getting error: "usb 1-1.1: failed to read gpi
 Add to yocto image: dhcpcd
 
 1. Run "/etc/init.d/mtwifi start uart 0"
-2. "ip link set wlan0 up"
+2. Run "ip link set wlan0 up"
 3. Scan for AP: "iw dev wlan0 scan | grep SSID
 4. Configure confgiration file: "wpa_passphrase SSID_NAME PASSWORD > /etc/wpa_supplicant.conf"
 5. Connect to AP: "wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf -D wext"
 6. Get ip and routing configuration. Run: "dhcpcd"
+
+# Configure the mtwifi script run on boot:
+Create yocto recipe and add those lines:
+    inherit update-rc.d
+
+    INITSCRIPT_NAME = "mtwifi"
+    INITSCRIPT_PARAMS = "start 99 S . stop 99 S ."
+
+    do_install() {
+    install -d ${D}/etc/init.d/
+    install -m 0755 ${WORKDIR}/mt7697wifi-driver/scripts/mtwifi ${D}/etc/init.d/
+    install -m 0755 ${WORKDIR}/mt7697wifi-driver/scripts/pa_wifi.sh ${D}/etc/init.d/
+    }
+
+    FILES:${PN} += "/etc"

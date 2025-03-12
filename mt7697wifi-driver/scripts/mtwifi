@@ -27,9 +27,6 @@ mt_wifi_start() {
         # fi
     fi
 
-    echo "argument 1 is: $1"
-    echo "Argument 2 is: $2"
-
     lsmod | grep mac80211 >/dev/null
     if [ $? -eq 1 ]; then
         modprobe mac80211
@@ -40,7 +37,6 @@ mt_wifi_start() {
     lsmod | grep mt7697core >/dev/null
     if [ $? -eq 1 ]; then
 	hw_itf=`echo $1 | tr '[A-Z]' '[a-z]'`
-	echo "hw_itf is: $hw_itf"
         modprobe mt7697core hw_itf=$hw_itf itf_idx_start=$2 || exit 127
         echo "Initialized MT7697 WiFi core";
         sleep 5
@@ -75,7 +71,7 @@ mt_wifi_stop() {
         if [ $? -eq 0 ]; then
             echo "Removed MT7697 WiFi core"
         else
-            echo "Faield to Removed MT7697 WiFi core"
+            echo "Faield to Remove MT7697 WiFi core"
         fi
     fi
 }
