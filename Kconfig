@@ -7,9 +7,9 @@ config MT7697
 
 if MT7697
 
-source "drivers/net/wireless/mt7697wifi/cp2130-driver/Kconfig"
-source "drivers/net/wireless/mt7697wifi/mt7697q-driver/Kconfig"
-source "drivers/net/wireless/mt7697wifi/mt7697serial-driver/Kconfig"
-source "drivers/net/wireless/mt7697wifi/mt7697wifi-driver/Kconfig"
+source "drivers/net/wireless/mediatek/mt7697wifi/cp2130-driver/Kconfig"
+source "drivers/net/wireless/mediatek/mt7697wifi/mt7697q-driver/Kconfig"
+source "drivers/net/wireless/mediatek/mt7697wifi/mt7697serial-driver/Kconfig"
+source "drivers/net/wireless/mediatek/mt7697wifi/mt7697wifi-driver/Kconfig"
 
 endif # MT7697
